@@ -4,8 +4,6 @@ import asyncio
 import uvicorn
 import json
 
-from mygame.mygame import MyGame
-
 # менеджер соединений
 class ConnectionManager:
     """класс, описывающий события от вебсокетов"""
@@ -33,7 +31,7 @@ class ConnectionManager:
         self.active_connections.remove(websocket)
 
 # весь веб в одном классе
-class WebApi:
+class ServerApi:
 
     def __init__(self, game, event_loop):
         # event loop для обработки фастапи
@@ -72,8 +70,14 @@ class WebApi:
             # это выполняется для каждого нового соединения и работает, пока оно не отсоединится
             try:
                 while True:
-                    data = await websocket.receive_text()
-                    await self.manager.send_personal_message(f"Received:{data}", websocket)
+                    message = await websocket.receive_text()
+                    # если от одного из игроков пришло сообщение, значит, он сдвинулся, и надо сообщить об этом игре
+                    data = json.loads(message)
+                    print(data)
+                    if (data["event_type"] == "player_moved"):
+                        self.game.move_player(data["data"])
+
+                    # await self.manager.send_personal_message(f"Received:{data}", websocket)
             except WebSocketDisconnect:
                 self.manager.disconnect(websocket)
     
@@ -91,6 +95,9 @@ class WebApi:
         config = uvicorn.Config(app=self.app, port=5000, log_level="info")
         server = uvicorn.Server(config)
         await server.serve()
+
+    def create_task(self):
+        return self.loop.create_task(self.serve())
 
     def close(self):
         self.loop.close()

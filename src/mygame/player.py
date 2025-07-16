@@ -2,9 +2,12 @@ import pygame
 import random
 
 class Player:
-    def __init__(self):
-        self.name = "Player" + str(random.randint(1, 10000))
-        self.pos = pygame.Vector2(0, 0)
+    def __init__(self, x, y, name = None):
+        if not name:
+            self.name = "Player" + str(random.randint(1, 10000))
+        else:
+            self.name = name
+        self.pos = pygame.Vector2(x, y)
 
 
     # функции для обновления/получения позиции
