@@ -4,7 +4,8 @@ pygame + fastapi test
 # перед установкой
 * создать venv
 * активировать
-* установить зависимости: `python3 -m pip install -U fastapi uvicorn pygame`
+* установить зависимости: `python3 -m pip install -U fastapi websockets uvicorn pygame`
 
 # запуск
 Из каталога src: `python3 main.py`
+После запуска игры можно открыть `web/index.html` в браузере, и туда будут приходить сообщения обо всех перемещениях игрока
